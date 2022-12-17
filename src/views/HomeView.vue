@@ -8,6 +8,7 @@ import Button from '../components/Button/Button.vue'
 </script>
 
 <template>
+<div class="page__wrapper">
 <header class="header">
 <div class="header__logo">
   <img src="@/assets/logo.svg" alt="">
@@ -115,6 +116,70 @@ import Button from '../components/Button/Button.vue'
 <Button text="Sign up" disabled/>
         </div>
 </section>
+</div>
 </template>
 
+<script>
+export default {
+  name: 'App',
+ data () {
+    return {
+        api: 'https://frontend-test-assignment-api.abz.agency/api/v1',
+        headers: {'Content-Type': 'application/json', 'access_token':'wm3gg940gy0xek1ld98uaizhz83c6rh2sir9f9fu'},
+        users: [],
+        token: "eyJpdiI6Im9mV1NTMlFZQTlJeWlLQ3liVks1MGc9PSIsInZhbHVlIjoiRTJBbUR4dHp1dWJ3ekQ4bG85WVZya3ZpRGlMQ0g5ZHk4M05UNUY4Rmd3eFM3czc2UDRBR0E4SDR5WXlVTG5DUDdSRTJTMU1KQ2lUQmVZYXZZOHJJUVE9PSIsIm1hYyI6ImE5YmNiODljZjMzMTdmMDc4NjEwN2RjZTVkNzBmMWI0ZDQyN2YzODI5YjQxMzE4MWY0MmY0ZTQ1OGY4NTkyNWQifQ==",
+        tokenString: '&token',
+        page: 1,
+        pageString: '&page=',
+        count: 6,
+        countString: '&count=',
+    }
+  },
+  methods: {
+       async requestTo(api) {
+      try {
+        const response = await fetch(api, {
+          method: 'GET',
+          // headers: this.headers,
+        }).then(this.checkStatus)
+            .then(this.parseJSON);
+            console.log(response);
+          this.users = response;
+      } catch (error) {
+        this.error = error
+      }
+    },
+     checkStatus: function (resp) {
+      if (resp.status >= 200 && resp.status < 300) {
+        return resp;
+      }
+      return this.parseJSON(resp).then((resp) => {
+        throw resp;
+      });
+    },
+    parseJSON: function (resp) {
+      return (resp.json ? resp.json() : resp);
+    },
+    checkStatus: function (resp) {
+      if (resp.status >= 200 && resp.status < 300) {
+        return resp;
+      }
+      return this.parseJSON(resp).then((resp) => {
+        throw resp;
+      });
+    },
+async onNextPage(){
+  this.page++
+  await this.requestTo(this.api) // + this.pageString + this.page.toString())
+},
+  },
+  async mounted () {
+    let apiRequest = this.api + '/users?' + this.pageString + this.page + this.countString + this.count
+    await this.requestTo(apiRequest)
 
+  },
+  goToAbout(){
+    this.$router.push('/about')
+  }
+}
+</script>
