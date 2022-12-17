@@ -31,51 +31,16 @@ import Button from '../components/Button/Button.vue'
 <section class="container main">
 <h2 class="main__title">Working with GET request</h2>
 <div class="main__cards">
-<div class="main__card">
-  <img class="main__img" src="@/assets/card1.jpg" alt="">
-  <p class="main__name">Salvador Stewart Flynn Thomas...</p>
-  <p class="main__job">Frontend Developer Frontend ...</p>
-  <p class="main__mail">frontend_develop@gmail.com</p>
-  <p class="main__num">+38 (098) 278 44 24</p>
-</div>
-<div class="main__card">
-  <img class="main__img" src="@/assets/card2.jpg" alt="">
-  <p class="main__name">Takamaru Ayako Jurrien</p>
-  <p class="main__job">FLead Independent Director </p>
-  <p class="main__mail">Takamuru@gmail.com</p>
-  <p class="main__num">+38 (098) 278 90 24</p>
-</div>
-<div class="main__card">
-  <img class="main__img" src="@/assets/card3.jpg" alt="">
-  <p class="main__name">Ilya</p>
-  <p class="main__job">Co-Founder and CEO</p>
-  <p class="main__mail">Ilya_founder@gmail.com</p>
-  <p class="main__num">+38 (098) 235 44 24</p>
-</div>
-<div class="main__card">
-  <img class="main__img" src="@/assets/card1.jpg" alt="">
-  <p class="main__name">Salvador Stewart Flynn Thomas...</p>
-  <p class="main__job">Frontend Developer Frontend ...</p>
-  <p class="main__mail">frontend_develop@gmail.com</p>
-  <p class="main__num">+38 (098) 278 44 24</p>
-</div>
-<div class="main__card">
-  <img class="main__img" src="@/assets/card1.jpg" alt="">
-  <p class="main__name">Salvador Stewart Flynn Thomas...</p>
-  <p class="main__job">Frontend Developer Frontend ...</p>
-  <p class="main__mail">frontend_develop@gmail.com</p>
-  <p class="main__num">+38 (098) 278 44 24</p>
-</div>
-<div class="main__card">
-  <img class="main__img" src="@/assets/card1.jpg" alt="">
-  <p class="main__name">Salvador Stewart Flynn Thomas...</p>
-  <p class="main__job">Frontend Developer Frontend ...</p>
-  <p class="main__mail">frontend_develop@gmail.com</p>
-  <p class="main__num">+38 (098) 278 44 24</p>
+<div class="main__card" v-for="n in users?.length ?? 0">
+  <img class="main__img" :src="users[n-1].photo ?? ''" alt="">
+  <p class="main__name">{{truncate(users[n-1].name ?? '', 20 )}}</p>
+  <p class="main__job">{{truncate(users[n-1].position ?? '', 20 )}}</p>
+  <p class="main__mail">{{truncate(users[n-1].email ?? '', 20 )}}</p>
+  <p class="main__num">{{truncate(users[n-1].phone ?? '', 20 )}}</p>
 </div>
 
 </div>
-<Button text="Sign up" class="main__btn"/>
+<Button text="Show more" class="main__btn" @click="onShowMoreTap()" v-show="showMore"/>
 </section>
 <section class="contacts container">
 <div class="contacts__wrapper">
@@ -133,10 +98,11 @@ export default {
         pageString: '&page=',
         count: 6,
         countString: '&count=',
+        showMore: true,
     }
   },
   methods: {
-       async requestTo(api) {
+       async requestTo(api, keepObjects) {
       try {
         const response = await fetch(api, {
           method: 'GET',
@@ -144,8 +110,16 @@ export default {
         }).then(this.checkStatus)
             .then(this.parseJSON);
             console.log(response);
-          this.users = response;
-      } catch (error) {
+          if (keepObjects == true){
+            this.users = this.users.concat(response.users)
+          } else {
+            this.users = response.users
+          } 
+            this.showMore = this.users.length < response.total_users
+            console.log(this.users.length);
+            console.log(response);
+      }
+       catch (error) {
         this.error = error
       }
     },
@@ -168,16 +142,21 @@ export default {
         throw resp;
       });
     },
-async onNextPage(){
+async onShowMoreTap(){
   this.page++
-  await this.requestTo(this.api) // + this.pageString + this.page.toString())
+  let apiRequest = this.api + '/users?' + this.pageString + this.page + this.countString + this.count
+  await this.requestTo(apiRequest, true) // + this.pageString + this.page.toString())
 },
+truncate(content, length){
+      return content.length > length ? content.slice(0, length) + '...' : content;
+}
   },
+
   async mounted () {
     let apiRequest = this.api + '/users?' + this.pageString + this.page + this.countString + this.count
-    await this.requestTo(apiRequest)
-
+    await this.requestTo(apiRequest, false)
   },
+  
   goToAbout(){
     this.$router.push('/about')
   }
