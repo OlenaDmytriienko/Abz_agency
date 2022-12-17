@@ -90,20 +90,29 @@ import Button from '../components/Button/Button.vue'
     <input id="number" class="contacts__inp" type="number" placeholder="Phone">
     <label for="number" class="contacts__forms__num-label">+38 (XXX) XXX - XX - XX</label>
     </div>
-</form>
-        <div class="contacts__radio">
+            <div class="contacts__radio">
           <p class="contacts__name">Select your position</p>
           <div class="contacts__inputs">
-            <label><input id="blue" class="contacts__inputs-radio" type="radio" > Frontend developer</label>
-            <label><input id="blue" class="contacts__inputs-radio" type="radio" > Backend developer</label>
-            <label><input id="blue" class="contacts__inputs-radio" type="radio" > Designer</label>
-            <label><input id="blue" class="contacts__inputs-radio" type="radio" > QA</label>
+            <label><input class="contacts__inputs-radio" type="radio" name="radio1"> Frontend developer</label>
+            <label><input class="contacts__inputs-radio" type="radio" name="radio1" > Backend developer</label>
+            <label><input class="contacts__inputs-radio" type="radio" name="radio1"> Designer</label>
+            <label><input class="contacts__inputs-radio" type="radio" name="radio1"> QA</label>
         </div></div>
+
+
 <div class="contacts__photo">
-  <input class="contacts__photo__upload" type="text" placeholder="Upload">
-  <input class="contacts__photo__upload-disabled" type="text" placeholder="Upload your photo">
+  	<label class="input-file">
+       	<span class="input-file-btn">Upload</span>
+      	<span class="input-file-text" type="text">Upload your photo</span>
+        <input type="file" name="file"> 
+ 	</label>
+  <!-- <label for=""><span>Upload</span><input class="contacts__photo__upload" type="file" placeholder="Upload" name="photo"></label>
+  <input class="contacts__photo__upload-disabled" type="text" placeholder="Upload your photo"> -->
+
 </div>
-<Button text="Sign up" class="button:disabled"/>
+</form>
+
+<Button text="Sign up" disabled/>
         </div>
 </section>
 </template>
