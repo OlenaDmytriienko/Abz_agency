@@ -1,0 +1,18 @@
+.button {
+  margin: 0 auto;
+  display: block;
+  padding: 4px 23px;
+  border-radius: 80px;
+  font-size: 16px;
+  border: none;
+  background-color: #f4e041;
+  color: rgba(0, 0, 0, 0.87);
+  &:hover {
+    background-color: #ffe302;
+    color: rgba(0, 0, 0, 0.87);
+  }
+  &:disabled {
+    background-color: #b4b4b4;
+    color: rgba(255, 255, 255, 0.87);
+  }
+}
