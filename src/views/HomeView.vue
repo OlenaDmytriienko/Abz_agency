@@ -6,6 +6,7 @@ import '../components/Button/button.scss'
 import '@/style/index.scss'
 import defaultPhoto from '@/assets/nocard1.png'
 import Button from '../components/Button/Button.vue'
+import Spiner from '../components/Spiner/Spiner.vue'
 
 import Users from  "../api/Users.js"
 import Positions from  "../api/Positions.js"
@@ -47,7 +48,11 @@ import Token from  "../api/Token.js"
 </div>
 
 </div>
+ <!-- <img class="spiner" src="../assets/spiner.svg" alt=""> -->
+ <Spiner class="spiner"/>
+
 <Button text="Show more" class="main__btn" @click="onShowMoreTap()" v-show="showMore"/>
+
 </section>
 <section class="contacts container">
 <div class="contacts__wrapper">
@@ -84,7 +89,8 @@ import Token from  "../api/Token.js"
         <Field type="file" name="photo" :rules="validatePhoto"/> 
  	  </label>
   </div> 
-  <Button text="Sign up" />
+ <router-link to="/about" class="router"> <Button text="Sign up"/></router-link>
+ <!-- <img class="spiner" src="../assets/spiner.svg" alt=""> -->
 </Form>
 
 
