@@ -15,14 +15,7 @@ body {
   padding: 0 60px;
   margin: 0 auto;
 }
-h1 {
-  font-family: "Nunito";
-  font-size: 40px;
-  line-height: 40px;
-  text-align: center;
-  padding-bottom: 50px;
-  padding-top: 60px;
-}
+
 .about {
     display: flex;
     justify-content: center;
@@ -31,5 +24,13 @@ h1 {
   &__img {
     width: 328px;
     height: 290px;
+  }
+  &__title {
+    font-family: "Nunito";
+    font-size: 40px;
+    line-height: 40px;
+    text-align: center;
+    padding-bottom: 50px;
+    padding-top: 60px;
   }
 }

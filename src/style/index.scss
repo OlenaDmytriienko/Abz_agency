@@ -123,7 +123,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 50px;
-    padding-bottom: 43px;
+    // padding-bottom: 43px;
   }
   &__forms__num {
     display: flex;
@@ -145,6 +145,12 @@ body {
     gap: 7px;
     padding-bottom: 47px;
   }
+  &__inp-invalid {
+    border: 1px solid rgba(203, 61, 64, 1);
+    border-radius: 4px;
+    padding: 14px 16px;
+    width: 380px;
+  }
   &__name {
     padding-bottom: 14px;
   }
@@ -159,9 +165,6 @@ body {
   }
 }
 
-.contacts__inputs-radio[type="radio"]:checked {
-  background-image: url(../../src/assets/radio.png);
-}
 .input-file-text {
   padding: 15px 14px;
   width: 100%;
@@ -194,6 +197,9 @@ body {
   box-sizing: border-box;
   border: 1px solid rgba(0, 0, 0, 0.87);
 }
+.input-file-btn-invalid, .input-file-text-invalid{
+  border: 1px solid rgba(203, 61, 64, 1);
+}
 .input-file input[type="file"] {
   position: absolute;
   z-index: -1;
@@ -218,7 +224,24 @@ body {
 .router{
   text-decoration: none;
 }
-
+.about {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+&__img {
+  width: 328px;
+  height: 290px;
+}
+&__title {
+  font-family: "Nunito";
+  font-size: 40px;
+  line-height: 40px;
+  text-align: center;
+  padding-bottom: 50px;
+  padding-top: 50px;
+}
+}
 @media (max-width: 820px) {
   .header {
     padding: 13px 32px;
@@ -236,6 +259,9 @@ body {
     width: 245px;
   }
   .contacts__inp {
+    width: 328px;
+  }
+  .contacts__inp-invalid {
     width: 328px;
   }
   .contacts__wrapper {
@@ -258,9 +284,13 @@ body {
   .contacts__inp {
     width: 296px;
   }
+  .contacts__inp-invalid {
+    width: 296px;
+  }
 }
 @media (min-width: 1500px) {
   .page__wrapper {
     margin: 0 20%;
   }
 }
+
