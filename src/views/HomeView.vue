@@ -231,8 +231,8 @@ export default {
       }
     },
 
+//Cheking the entered value is empty to show error style and disable button
     checkInputName(event) {
-      console.log(event.target.value);
       if (event.target.value == "") {
         this.errorInputName = true;
         this.isNameFilled = false;
@@ -262,13 +262,12 @@ export default {
     checkInputPosition(event) {
       this.isPositionFilled = true;
     },
-
+      // User name, should be 2-60 characters
     validateName(value) {
       if (!value) {
-        // this.errorInputName = true;
         return "This field is required";
       }
-
+      
       if (value.length < 2 || value.length > 60) {
         this.errorInputName = true;
         return "The name must be 2-60 characters long";
@@ -278,11 +277,10 @@ export default {
 
       return true;
     },
-
+      //User email, must be a valid email according to RFC2822
     validateEmail(value) {
       console.log(value);
       if (!value) {
-      
         return "This field is required";
       }
 
@@ -299,10 +297,9 @@ export default {
       this.errorInputEmail = false;
       return true;
     },
-
+      //User phone number, should start with code of Ukraine +380
     validatePhone(value) {
       if (!value) {
-        // this.errorInputPhone = true;
         return "This field is required";
       }
 
@@ -314,17 +311,16 @@ export default {
       this.errorInputPhone = false;
       return true;
     },
-
+      //User position id. You can get list of all positions with their IDs using the API method GET api/v1/positions
     validatePosition(value) {
       if (!value) {
         return "This field is required";
       }
       return true;
     },
-
+      //User photo should be jpg/jpeg image, with resolution at least 70x70px and size must not exceed 5MB.
     async validatePhoto(value) {
       if (!value) {
-        //this.errorInputPhoto = true;
         return "This field is required";
       }
 
@@ -341,7 +337,7 @@ export default {
 
       let global = this;
       let reader = new FileReader();
-
+        //Before getting photo resolution we must read and load image asynchronously and save result to valid value
       reader.readAsDataURL(value);
       reader.onload = function (e) {
         var image = new Image();
@@ -366,7 +362,7 @@ export default {
 
       return true;
     },
-
+      //Obtain users from API
     async getUsers() {
       this.isLoadingUsers = true;
       Users.getUsers(this.page, this.count)
@@ -401,24 +397,25 @@ export default {
           this.errored = true;
         });
     },
+      //Click on show more button
     async onShowMoreTap() {
       this.page++;
       await this.getUsers();
     },
-
+      //Method for cutting text
     truncate(content, length) {
       return content.length > length
         ? content.slice(0, length) + "..."
         : content;
     },
-
+      //Event for success sign in
     async goToSuccess() {
       this.isSignedIn = true;
       this.users = [];
       this.page = 1;
       await this.getUsers();
     },
-
+      //Method for checking should sign in button be disabled
     updateSignIn() {
       this.isSignInEnabled =
         this.isNameFilled &&
@@ -429,7 +426,7 @@ export default {
     },
 
     imageUrlAlt(event) {
-      event.target.src = "@/assets/nocard1.png"; // https://prohvost.club/wp-content/uploads/2018/05/britanskaya-shinshilla-700x329.jpg
+      event.target.src = "@/assets/nocard1.png"; 
     },
   },
 

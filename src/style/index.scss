@@ -124,7 +124,6 @@ body {
     display: flex;
     flex-direction: column;
     gap: 50px;
-    // padding-bottom: 43px;
   }
   &__forms__num {
     display: flex;
@@ -221,15 +220,6 @@ body {
   from { transform: rotate(0deg);}
   to { transform: rotate(360deg);}
 }
-// .spiner{
-//   display: none;
-//   margin: 0 auto;
-//   margin-bottom: 10px;
-//   width: 48px;
-//   height: 48px;
-//   animation: spin 1.7s infinite;
-// }
-
 .router{
   text-decoration: none;
 }
@@ -255,9 +245,6 @@ body {
   .header {
     padding: 13px 32px;
   }
-  // .container {
-  //   padding: 0 32px;
-  // }
   .main__cards {
     grid-template-columns: repeat(2, 3fr);
   }
@@ -281,18 +268,6 @@ body {
       width: 328px;
     } 
   }
-  // .contacts__inp {
-  //   width: 328px;
-  // }
-  // .contacts__inp-invalid {
-  //   width: 328px;
-  // }
-  // .contacts__wrapper {
-  //   width: 328px;
-  // }
-  // .contacts__join {
-  //   width: 328px;
-  // }
 }
 @media (max-width: 600px) {
   .header {
@@ -301,18 +276,9 @@ body {
   .box {
     width: 328px;
   }
-  // .container {
-  //   padding: 0 16px;
-  // }
   .main__cards {
     grid-template-columns: repeat(1, 9fr);
   }
-  // .contacts__inp {
-  //   width: 296px;
-  // }
-  // .contacts__inp-invalid {
-  //   width: 296px;
-  // }
   .contacts__join {
     width: 296px;
   }
@@ -323,9 +289,6 @@ body {
     &__inp-invalid{
       width: 296px;
     } 
-    // &__wrapper{
-    //   width: 328px;
-    // } 
     &__join{
       width: 296px;
     } 
