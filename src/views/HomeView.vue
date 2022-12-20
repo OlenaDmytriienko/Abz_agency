@@ -7,7 +7,7 @@ import "@/style/index.scss";
 import defaultPhoto from "@/assets/nocard1.png";
 import Button from "../components/Button/Button.vue";
 import Spiner from "../components/Spiner/Spiner.vue";
-
+import 'floating-vue/dist/style.css'
 import Users from "../api/Users.js";
 import Positions from "../api/Positions.js";
 import { Form, Field, ErrorMessage } from "vee-validate";
@@ -52,13 +52,22 @@ import Token from "../api/Token.js";
             alt=""
             @error="imageUrlAlt"
           />
-          <p class="main__name">
+          <p class="main__name" v-tooltip="{
+            content: user.name,
+            theme: 'info-tooltip'
+          }" v-if="user.name.length >= 20"> 
             {{ truncate(user.name ?? "Unknown User", 20) }}
           </p>
-          <p class="main__job">
+          <p class="main__name" v-else>{{user.name ?? "Unknown User"}}</p>
+          <p class="main__job" v-if="user.position.length >= 20" v-tooltip="user.position">
             {{ truncate(user.position ?? "No Position", 20) }}
           </p>
-          <p class="main__mail">{{ truncate(user.email ?? "No email", 20) }}</p>
+          <p class="main__job" v-else>
+            {{ user.position ?? "No Position" }}
+          </p>
+          <p class="main__mail" v-if="user.email.length >= 20" v-tooltip="user.email">
+            {{ truncate(user.email ?? "No email", 20) }}</p>
+          <p class="main__mail" v-else>{{user.email ?? "No email"}}</p>
           <p class="main__num">{{ truncate(user.phone ?? "No phone", 20) }}</p>
         </div>
       </div>
