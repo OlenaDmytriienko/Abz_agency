@@ -23,8 +23,8 @@ import Token from "../api/Token.js";
         <img src="@/assets/logo1.png" alt="" />
       </div>
       <div class="header__btns">
-        <Button text="Users" />
-        <Button text="Sign up" />
+        <Button text="Users" @click="scrollToElement({behavior: 'smooth'}, 'main__title')"/>
+        <Button text="Sign up" @click="scrollToElement({behavior: 'smooth'}, 'contacts__wrapper')"/>
       </div>
     </header>
 
@@ -39,11 +39,11 @@ import Token from "../api/Token.js";
           Development keeps evolving.
         </p>
       </div>
-      <Button text="Sign up" class="first__btn" />
+      <Button text="Sign up" class="first__btn" @click="scrollToElement({behavior: 'smooth'}, 'contacts__wrapper')"/>
     </section>
 
     <section class="container main">
-      <h2 class="main__title">Working with GET request</h2>
+      <div class="main__title-wrapper"><h2 class="main__title">Working with GET request</h2></div>
       <div class="main__cards">
         <div class="main__card" v-for="user in users">
           <img
@@ -62,7 +62,7 @@ import Token from "../api/Token.js";
           <p class="main__num">{{ truncate(user.phone ?? "No phone", 20) }}</p>
         </div>
       </div>
-      <Spiner class="spiner" />
+      <Spiner class="spiner" v-show="isLoadingUsers" />
       <Button
         text="Show more"
         class="main__btn"
@@ -71,7 +71,7 @@ import Token from "../api/Token.js";
       />
     </section>
     <section class="contacts container">
-      <div class="contacts__wrapper">
+      <div class="contacts__wrapper" v-show="isSignedIn == false">
         <h2 class="contacts__title">Working with POST request</h2>
 
         <Form class="contacts__forms" @submit="onSubmit">
@@ -82,18 +82,22 @@ import Token from "../api/Token.js";
               name="name"
               placeholder="Your name"
               :rules="validateName"
+              :class="{ 'contacts__inp-invalid': errorInputName == true }"
+              @blur="checkInputName($event)"
             />
-            <ErrorMessage name="name" />
+            <ErrorMessage name="name" class="contacts__input-text-invalid" />
           </div>
           <div>
             <Field
-              class="contacts__inp-invalid"
+              class="contacts__inp"
               type="email"
               name="email"
               placeholder="Email"
               :rules="validateEmail"
+              :class="{ 'contacts__inp-invalid': errorInputEmail == true }"
+              @blur="checkInputEmail($event)"
             />
-            <ErrorMessage name="email" />
+            <ErrorMessage name="email" class="contacts__input-text-invalid" />
           </div>
           <div>
             <Field
@@ -102,11 +106,13 @@ import Token from "../api/Token.js";
               name="phone"
               placeholder="Phone"
               :rules="validatePhone"
+              :class="{ 'contacts__inp-invalid': errorInputPhone == true }"
+              @blur="checkInputPhone($event)"
             />
             <label for="phone" class="contacts__forms__num-label"
               >+38 (XXX) XXX - XX - XX</label
             ><br />
-            <ErrorMessage name="phone" />
+            <ErrorMessage name="phone" class="contacts__input-text-invalid" />
           </div>
           <div class="contacts__radio">
             <p class="contacts__name">Select your position</p>
@@ -116,30 +122,53 @@ import Token from "../api/Token.js";
                 :value="position.id"
                 class="contacts__inputs-radio"
                 :rules="validatePosition"
+                @click="checkInputPosition($event)"
                 name="position"
               />
               {{ position.name }}
             </label>
-            <ErrorMessage name="position" />
+            <ErrorMessage
+              name="position"
+              class="contacts__input-text-invalid"
+            />
           </div>
           <div class="contacts__photo">
             <label class="input-file">
-              <span class="input-file-btn">Upload</span>
-              <span class="input-file-text" type="text">{{ photoText }}</span>
-              <ErrorMessage name="photo" />
-              <Field type="file" name="photo" :rules="validatePhoto" />
+              <div class="contacts__join">
+              <span
+                class="input-file-btn"
+                :class="{ 'contacts__inp-invalid': errorInputPhoto == true }"
+                >Upload</span
+              >
+              <span
+                class="input-file-text"
+                type="text"
+                :class="{ 'contacts__inp-invalid': errorInputPhoto == true }"
+                >{{ photoText }}</span
+              ></div> 
+              <ErrorMessage name="photo" class="contacts__input-text-invalid" />
+              <Field
+                type="file"
+                name="photo"
+                :rules="validatePhoto"
+                :class="{ 'contacts__inp-invalid': errorInputPhoto == true }"
+              />
             </label>
           </div>
-          <Button text="Sign up" disabled/>
+          <Button text="Sign up" v-if="isSignInEnabled" />
+          <Button text="Sign up" disabled v-else />
           <!-- <router-link to="/about" class="router"> <Button text="Sign up"/></router-link> -->
           <!-- <img class="spiner" src="../assets/spiner.svg" alt=""> -->
         </Form>
-      <div class="about">
-    <h1 class="about__title">User successfully registered</h1>
-    <img class="about__img" src="../assets/success.png" alt="Success registration">
-  </div>
       </div>
-
+      <div class="success" v-show="isSignedIn">
+        <h1 class="success__title">User successfully registered</h1>
+        <img
+          class="success__img"
+          src="../assets/success.png"
+          alt="Success registration"
+        />
+      </div>
     </section>
   </div>
 </template>
@@ -162,6 +191,19 @@ export default {
       showMore: true,
       photoResolutionIsValid: true,
       photoText: "Upload your photo",
+      isNameFilled: false,
+      isPhoneFilled: false,
+      isEmailFilled: false,
+      isPositionFilled: false,
+      isPhotoFilled: false,
+      isSignInEnabled: false,
+      isSignedIn: false,
+      isLoadingUsers: false,
+      errorInputName: false,
+      errorInputPhone: false,
+      errorInputPosition: false,
+      errorInputEmail: false,
+      errorInputPhoto: false,
     };
   },
 
@@ -172,45 +214,95 @@ export default {
       });
     },
 
+    scrollToElement(options, elementClass) {
+      const el = this.$el.getElementsByClassName(elementClass)[0];
+      
+      if (el) {
+        el.scrollIntoView(options);
+      }
+    },
+
+    checkInputName(event) {
+      console.log(event.target.value);
+      if (event.target.value == "") {
+        this.errorInputName = true;
+        this.isNameFilled = false;
+      } else {
+        this.isNameFilled = true;
+      }
+    },
+
+    checkInputEmail(event) {
+      if (event.target.value == "") {
+        this.errorInputEmail = true;
+        this.isEmailFilled = false;
+      } else {
+        this.isEmailFilled = true;
+      }
+    },
+
+    checkInputPhone(event) {
+      if (event.target.value == "") {
+        this.errorInputPhone = true;
+        this.isPhoneFilled = false;
+      } else {
+        this.isPhoneFilled = true;
+      }
+    },
+
+    checkInputPosition(event) {
+      this.isPositionFilled = true;
+    },
+
     validateName(value) {
       if (!value) {
+        // this.errorInputName = true;
         return "This field is required";
       }
 
       if (value.length < 2 || value.length > 60) {
+        this.errorInputName = true;
         return "The name must be 2-60 characters long";
       }
+      this.errorInputName = false;
+      this.isNameFilled = true;
 
       return true;
     },
 
     validateEmail(value) {
+      console.log(value);
       if (!value) {
+      
         return "This field is required";
       }
 
       if (value.slice(-3) == ".ru") {
+        this.errorInputEmail = true;
         return "Геть з України, москаль некрасівий!";
       }
 
       const regex = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
       if (!regex.test(value)) {
+        this.errorInputEmail = true;
         return "This field must be a valid email";
       }
-
+      this.errorInputEmail = false;
       return true;
     },
 
     validatePhone(value) {
       if (!value) {
+        // this.errorInputPhone = true;
         return "This field is required";
       }
 
       const regex = /[+]{1}[3]{1}[8]{1}[0]{1}[0-9]{9}/;
       if (!regex.test(value)) {
+        this.errorInputPhone = true;
         return "The phone number should start with the code of Ukraine";
       }
-
+      this.errorInputPhone = false;
       return true;
     },
 
@@ -223,15 +315,18 @@ export default {
 
     async validatePhoto(value) {
       if (!value) {
+        //this.errorInputPhoto = true;
         return "This field is required";
       }
 
       if (!(value.type == "image/jpeg" || value.type == "image/jpg")) {
+        this.errorInputPhoto = true;
         return "The photo should be jpg/jpeg image";
       }
 
       let maxSize = 5242880;
       if (value.size > maxSize) {
+        this.errorInputPhoto = true;
         return "The image size must not exceed 5MB";
       }
 
@@ -251,15 +346,20 @@ export default {
         };
       };
 
+      this.photoText = value.name;
+      this.errorInputPhoto = false;
+      this.isPhotoFilled = true;
+
       if (!this.photoResolutionIsValid) {
+        this.errorInputPhoto = true;
         return "The image resolution must be at least 70x70px";
       }
-      this.photoText = value.name;
 
       return true;
     },
 
     async getUsers() {
+      this.isLoadingUsers = true;
       Users.getUsers(this.page, this.count)
         .then((response) => {
           this.users = this.users.concat(response.data.users);
@@ -269,7 +369,7 @@ export default {
           console.log(error);
           this.errored = true;
         })
-        .finally(() => (this.loading = false));
+        .finally(() => (this.isLoadingUsers = false));
     },
 
     async getPositions() {
@@ -303,8 +403,20 @@ export default {
         : content;
     },
 
-    goToSuccess() {
-      this.$router.push("/about");
+    async goToSuccess() {
+      this.isSignedIn = true;
+      this.users = [];
+      this.page = 1;
+      await this.getUsers();
+    },
+
+    updateSignIn() {
+      this.isSignInEnabled =
+        this.isNameFilled &&
+        this.isEmailFilled &&
+        this.isPhoneFilled &&
+        this.isPositionFilled &&
+        this.isPhotoFilled;
     },
 
     imageUrlAlt(event) {
@@ -312,10 +424,29 @@ export default {
     },
   },
 
+  watch: {
+    isNameFilled: function (val) {
+      this.updateSignIn();
+    },
+    isEmailFilled: function (val) {
+      this.updateSignIn();
+    },
+    isPhoneFilled: function (val) {
+      this.updateSignIn();
+    },
+    isPositionFilled: function (val) {
+      this.updateSignIn();
+    },
+    isPhotoFilled: function (val) {
+      this.updateSignIn();
+    },
+  },
+
   async mounted() {
     await this.getUsers();
     await this.getPositions();
     await this.getToken();
+
   },
 };
 </script>
